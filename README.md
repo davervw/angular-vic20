@@ -6,3 +6,5 @@ Instructions:
     Transfer project files or d64 to it
     LOAD"STARTUP",8
     RUN
+
+Utilizes LOADHIRES20 from the [hires-vic-20](https://github.com/davervw/hires-vic-20) project
