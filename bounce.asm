@@ -16,13 +16,13 @@
 ;  Visual Code extension (color syntax) https://marketplace.visualstudio.com/items?itemName=TonyLandi.acmecrossassembler
 
 ; expect hires20.ml @ a000-b7ff
-; expect icons @ b800-b9e0
+; expect icons2 @ b000-b31f
 
 ;---- equates
-icon_width   = 24
-icon_height  = 32
+icon_width   = 32
+icon_height  = 40
 icon_bytes   = (icon_width*icon_height/8)
-icons        = $b800 ; shape data
+icons        = $b000 ; shape data
 
 ;---- structure equates (offsets, etc.)
 x1 = 0
@@ -115,8 +115,6 @@ start
     bcs ++
     jsr iterate_icons_for_collision
     bcs +
-    ldx #5
-    jsr remove_icon
     tax
     jsr place_icon
     jmp +++
@@ -232,46 +230,6 @@ place_icon ; INPUT: .X = icon
 
     rts
 
-; remove icon from screen with color
-remove_icon ; INPUT: .X = icon
-    ; save registers
-    pha
-    txa
-    pha
-    tya
-    pha
-
-    ; get address of icon
-    ldy #<icon_blank
-    sty $fd
-    ldy #>icon_blank
-    sty $fe
-
-    txa
-    jsr mult10
-    tax
-    lda icon_position+x1,x
-    sta param1
-    lda icon_position+y1,x
-    sta param2
-    lda icon_position+x2,x
-    sta param3
-    lda icon_position+y2,x
-    sta param4
-
-    lda #1
-    sta param5 ; PUT
-    jsr get_put_shape
-
-    ; restore registers
-    pla
-    tay
-    pla
-    tax
-    pla
-
-    rts
-
 ; initialize random number generator from jiffy clock
 init_random
     clc
@@ -322,23 +280,23 @@ get_random_coordinates
 ; get random directions
 get_random_vector
     ; INPUTS: none (preserves .A)
-    ; OUTPUTS: .X/.Y directions -8 to +8 each (signed byte)
+    ; OUTPUTS: .X/.Y directions -4 to +4 each (signed byte)
     ;          .X will be even
     pha
 -   jsr get_next_random_byte
-    ldx #17
+    ldx #9
     jsr multax ; result in .A(lo),.X(hi) for random treating as a fraction result in .X, discard .A
-    txa ; result is 0..16
+    txa ; result is 0..8
     sec
-    sbc #8
+    sbc #4
     tay
     jsr get_next_random_byte
-    ldx #9
+    ldx #5
     jsr multax ; result in .A(lo),.X(hi)
-    txa ; result is 0..8
-    asl ; ensure is even number for multicolor requirements (keep x coordinate even), result is 0..16
+    txa ; result is 0..4
+    asl ; ensure is even number for multicolor requirements (keep x coordinate even), result is 0..8
     sec
-    sbc #8
+    sbc #4
     tax
     sty temp
     ora temp
@@ -790,6 +748,8 @@ check1_index !byte 0
 check2_index !byte 0
 
 icon_blank ; icon data, border color that simulates background
+    !byte $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
+    !byte $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
     !byte $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
     !byte $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
     !byte $55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55,$55
