@@ -5,6 +5,7 @@
 Instructions:
 
     Get out your Vic-20 (or emulator)
+    Configure with 8K expansion ram at $2000, and 8K @ $A000
     Transfer project files or d64 to it
     LOAD"STARTUP",8
     RUN
