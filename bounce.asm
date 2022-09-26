@@ -39,6 +39,7 @@ pos_bytes = 10 ; icon position struct size
 
 ;---- ROM externals
 strout       = $cb1e ; PRTSTR
+stop         = $ffe1
 
 ;---- hires externals
 hires_init	    = $a0be
@@ -61,9 +62,9 @@ resy	        = $af7d
 start
     jsr text_splash
 
-    ; ldy #0
-    ; lda #120
-    ; jsr call_delay
+    ldy #120
+    lda #0
+    jsr call_delay
 
     jsr init_random
 
@@ -109,7 +110,6 @@ start
 ; repeat
 
 --  lda #0
-    ;todo: check for stop, break
 -   jsr save_icon_position
     jsr move_icon
     bcs ++
@@ -126,13 +126,14 @@ start
     adc #1
     cmp #5
     bcc - ; next icon
-    beq -- ; repeat forever
+    jsr stop
+    bne -- ; repeat while STOP not pressed
 
 ; finish up
 
-    ldy #30
-    lda #0
-    jsr call_delay
+    ; wait for user to release STOP
+-   jsr stop
+    beq -
 
 ; restore colors to defaults
     lda #6 ; blue
@@ -680,14 +681,29 @@ mult10
 
 ; ---- data
 credits
+    !byte 147
+    !byte 18
     !text "ANGULAR ANIMATION"
     !byte 13
     !text "COPYRIGHT (C) 2022"
     !byte 13
     !text "BY DAVID VAN WAGNER"
+    !byte 13, 13
+
+    !byte 18
+    !text "VIC-20 HIRES"
     !byte 13
+    !text "COPYRIGHT (C) 2022"
+    !byte 13
+    !text "BY DAVID VAN WAGNER"
+    !byte 13, 13
+
     !text "DAVEVW.COM"
-    !byte 13, 0
+    !byte 13
+    !text "MIT LICENSE"
+    !byte 13
+    !byte 0
+
 
 alarm
     !byte 0,0,0
