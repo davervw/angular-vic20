@@ -23,6 +23,7 @@ icon_width   = 32
 icon_height  = 40
 icon_bytes   = (icon_width*icon_height/8)
 icons        = $b000 ; shape data
+n_icons      = 7 ; number of icons
 
 ;---- structure equates (offsets, etc.)
 x1 = 0
@@ -39,7 +40,7 @@ pos_bytes = 10 ; icon position struct size
 
 ;---- ROM externals
 strout       = $cb1e ; PRTSTR
-stop         = $ffe1
+chkstop      = $ffe1
 
 ;---- hires externals
 hires_init	    = $a0be
@@ -96,7 +97,7 @@ start
     ldx #0
 -   jsr place_icon
     inx
-    cpx #5
+    cpx #n_icons
     bne -
 
 ; do
@@ -124,15 +125,15 @@ start
     jsr set_icon_vector
 +++ clc
     adc #1
-    cmp #5
+    cmp #n_icons
     bcc - ; next icon
-    jsr stop
+    jsr chkstop
     bne -- ; repeat while STOP not pressed
 
 ; finish up
 
     ; wait for user to release STOP
--   jsr stop
+-   jsr chkstop
     beq -
 
 ; restore colors to defaults
@@ -159,7 +160,7 @@ position_icons_non_overlap
 -   jsr set_icon_position
     clc
     adc #1
-    cmp #5
+    cmp #n_icons
     bne -
 
     ; randomize all icon positions, vectors
@@ -172,7 +173,7 @@ position_icons_non_overlap
     jsr set_icon_vector
     clc
     adc #1
-    cmp #5
+    cmp #n_icons
     bne -
     rts
 
@@ -375,12 +376,12 @@ set_icon_position
     sta icon_position+b1,x
 
     lda icon_position+x2,x
-    adc #7
     and #$f8
+    ora #7
     sta icon_position+a2,x
     lda icon_position+y2,x
-    adc #15
     and #$f0
+    ora #15
     sta icon_position+b2,x
 
     lda icon_position+y1,x
@@ -397,7 +398,7 @@ save_icon_position
     ; OUTPUTS: icon position structure copied to 6th position
     pha
     jsr get_icon_position
-    lda #5
+    lda #n_icons
     jsr set_icon_position
     pla
     rts
@@ -406,7 +407,7 @@ restore_icon_position
     ; INPUTS: .A = icon# (all preserved)
     ; OUTPUTS: icon position structure copied from 6th position
     pha
-    lda #5
+    lda #n_icons
     jsr get_icon_position
     pla
     jsr set_icon_position
@@ -458,7 +459,7 @@ iterate_icons_for_collision
     bcs ++
 +   clc
     adc #1 ; increment iterator
-    cmp #5 ; last icon?
+    cmp #n_icons ; last icon?
     bne - ; loop until done
     clc
 
@@ -714,6 +715,8 @@ icon_color
     !byte 2+8
     !byte 6+8
     !byte 7+8
+    !byte 5+8
+    !byte 4+8
 
 save_param1 !byte 0
 save_param2 !byte 0
@@ -743,12 +746,14 @@ random_bytes
     !byte $07, $6a, $da, $18, $5c, $1b, $c8, $f6, $28, $ae, $0c, $f7, $f1, $be, $35, $dc
     !byte $6f, $cb, $98, $32, $c5, $12, $fc, $6d, $78, $b4, $a4, $95, $b8, $39, $d9, $a3
 
-icon_position ; structures for 6 icons
+icon_position ; structures for n_icons + 1
     ; topleft: x1, y1, bottomright: x2, y2, 
     ; colortopleft: a1, a2
     ; colorbottomright: b1, b2
     ; vector (xdelta, ydelta): xd, yd
     ; x1, y1, x2, y2, a1, a2, b1, b2, xd, yd (10 bytes)
+    !byte 0,0,0,0,0,0,0,0,0,0
+    !byte 0,0,0,0,0,0,0,0,0,0
     !byte 0,0,0,0,0,0,0,0,0,0
     !byte 0,0,0,0,0,0,0,0,0,0
     !byte 0,0,0,0,0,0,0,0,0,0
