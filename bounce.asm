@@ -23,7 +23,7 @@ icon_width   = 32
 icon_height  = 40
 icon_bytes   = (icon_width*icon_height/8)
 icons        = $b000 ; shape data
-n_icons      = 8 ; number of icons
+n_icons      = 9 ; number of icons
 
 ;---- structure equates (offsets, etc.)
 x1 = 0
@@ -717,6 +717,7 @@ icon_color
     !byte 5+8
     !byte 4+8
     !byte 0+8
+    !byte 2+8
 
 save_param1 !byte 0
 save_param2 !byte 0
@@ -752,16 +753,17 @@ icon_position ; structures for n_icons + 1
     ; colorbottomright: b1, b2
     ; vector (xdelta, ydelta): xd, yd
     ; x1, y1, x2, y2, a1, a2, b1, b2, xd, yd (10 bytes)
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-    !byte 0,0,0,0,0,0,0,0,0,0
-
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [0]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [1]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [2]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [3]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [4]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [5]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [6]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [7]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [8]
+    !byte 0,0,0,0,0,0,0,0,0,0 ; [9]
+    
 temp !byte 0
 tempx !byte 0
 tempy !byte 0
