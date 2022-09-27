@@ -238,7 +238,6 @@ init_random
     lda $A0
     adc $A1
     adc $A2
-lda #0 ; TODO: FOR REPEATABILITY - REMOVE AFTER R&D TESTING
     sta random_index
     rts    
 
