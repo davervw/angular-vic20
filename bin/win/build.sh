@@ -1,4 +1,4 @@
-export ACME=/c/Users/Dave/Downloads/acme0.96.4win/acme 
+export ACME=/c/Users/Dave/Downloads/acme0.97win/acme 
 export VICE=/c/Users/Dave/Downloads/GTK3VICE-3.6.1-win64/bin
 ${ACME}/acme -f cbm -l build/labels -o build/bounce.prg bounce.asm
 [ $? -eq 0 ] || exit 1
